@@ -4,6 +4,7 @@
 ## now whitelist stuff
 
 !*.md
+!*.pdf
 
 !.gitignore
 
