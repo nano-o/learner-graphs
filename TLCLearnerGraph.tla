@@ -3,6 +3,7 @@
 CONSTANTS
     l1,l2,a1
 
+\* An example of a learner graph:
 LG == [
     learners |-> {l1,l2},
     acceptors |-> {a1},

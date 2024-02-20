@@ -16,9 +16,13 @@ IsLearnerGraph(lg) ==
     /\  lg.safeSets \in [lg.learners \times lg.learners -> SUBSET SUBSET lg.acceptors]
     /\  \A p \in lg.learners\times lg.learners : lg.safeSets[p] = lg.safeSets[Reverse(p)]
 
-IsValidLearnerGraph(lg) == \A l1,l2 \in lg.learners : l1 # l2 =>
-    \A s \in lg.safeSets[<<l1,l2>>] : \A q1 \in lg.quorums[l1] : \A q2 \in lg.quorums[l2] :
-        s \cap q1 \cap q2 # {}
+IsValidLearnerGraph(lg) == 
+    /\  IsLearnerGraph(lg)
+    /\  \A l1,l2 \in lg.learners : l1 # l2 =>
+            \A s \in lg.safeSets[<<l1,l2>>] :
+                \A q1 \in lg.quorums[l1] : 
+                    \A q2 \in lg.quorums[l2] :
+                        s \cap q1 \cap q2 # {}
     
 
 ====================================================
