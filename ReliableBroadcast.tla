@@ -65,10 +65,20 @@ l0:     while (TRUE)
                 ready[self][l] := ready[self][l] \cup {v}; 
             }
     }
+    process (byzAcceptor \in B) {
+l0:     while (TRUE) {
+            with (v \in V)
+                echo[self] := echo[self] \cup {v};
+            with (rdy \in [Learner -> V]) {
+                ready[self] := [l \in Learner |-> ready[self][l] \cup {rdy[l]}];
+            }
+        }
+    }
 }
 *)
-\* BEGIN TRANSLATION (chksum(pcal) = "f91fb979" /\ chksum(tla) = "e376aa40")
+\* BEGIN TRANSLATION (chksum(pcal) = "e073e0ef" /\ chksum(tla) = "f0610e59")
 \* Label l0 of process learner at line 37 col 14 changed to l0_
+\* Label l0 of process acceptor at line 44 col 9 changed to l0_a
 VARIABLES bcast, echo, ready, pc
 
 (* define statement *)
@@ -81,7 +91,7 @@ VARIABLE output
 
 vars == << bcast, echo, ready, pc, output >>
 
-ProcSet == (Learner) \cup (HonestAcceptor)
+ProcSet == (Learner) \cup (HonestAcceptor) \cup (B)
 
 Init == (* Global variables *)
         /\ bcast \in (SUBSET V) \ {{}}
@@ -90,7 +100,8 @@ Init == (* Global variables *)
         (* Process learner *)
         /\ output = [self \in Learner |-> <<>>]
         /\ pc = [self \in ProcSet |-> CASE self \in Learner -> "l0_"
-                                        [] self \in HonestAcceptor -> "l0"]
+                                        [] self \in HonestAcceptor -> "l0_a"
+                                        [] self \in B -> "l0"]
 
 l0_(self) == /\ pc[self] = "l0_"
              /\ \E v \in V:
@@ -102,33 +113,44 @@ l0_(self) == /\ pc[self] = "l0_"
 
 learner(self) == l0_(self)
 
+l0_a(self) == /\ pc[self] = "l0_a"
+              /\ \/ /\ \E v \in V:
+                         /\ v \in bcast /\ echo[self] = {}
+                         /\ echo' = [echo EXCEPT ![self] = echo[self] \cup {v}]
+                    /\ ready' = ready
+                 \/ /\ \E v \in V:
+                         \E l \in Learner:
+                           \E Q \in LG.quorums[l]:
+                             /\ ready[self][l] = {}
+                             /\ \A a \in Q : v \in echo[a]
+                             /\ ready' = [ready EXCEPT ![self][l] = ready[self][l] \cup {v}]
+                    /\ echo' = echo
+                 \/ /\ \E v \in V:
+                         \E l \in Learner:
+                           LET readyForV == {a \in Acceptor : v \in ready[a][l]} IN
+                             /\  \A Q \in LG.quorums[l] :
+                                \/  Q \cap readyForV # {}
+                                \/  \A a \in Q : ProvenMalicious(a)
+                             /\ ready' = [ready EXCEPT ![self][l] = ready[self][l] \cup {v}]
+                    /\ echo' = echo
+              /\ pc' = [pc EXCEPT ![self] = "l0_a"]
+              /\ UNCHANGED << bcast, output >>
+
+acceptor(self) == l0_a(self)
+
 l0(self) == /\ pc[self] = "l0"
-            /\ \/ /\ \E v \in V:
-                       /\ v \in bcast /\ echo[self] = {}
-                       /\ echo' = [echo EXCEPT ![self] = echo[self] \cup {v}]
-                  /\ ready' = ready
-               \/ /\ \E v \in V:
-                       \E l \in Learner:
-                         \E Q \in LG.quorums[l]:
-                           /\ ready[self][l] = {}
-                           /\ \A a \in Q : v \in echo[a]
-                           /\ ready' = [ready EXCEPT ![self][l] = ready[self][l] \cup {v}]
-                  /\ echo' = echo
-               \/ /\ \E v \in V:
-                       \E l \in Learner:
-                         LET readyForV == {a \in Acceptor : v \in ready[a][l]} IN
-                           /\  \A Q \in LG.quorums[l] :
-                              \/  Q \cap readyForV # {}
-                              \/  \A a \in Q : ProvenMalicious(a)
-                           /\ ready' = [ready EXCEPT ![self][l] = ready[self][l] \cup {v}]
-                  /\ echo' = echo
+            /\ \E v \in V:
+                 echo' = [echo EXCEPT ![self] = echo[self] \cup {v}]
+            /\ \E rdy \in [Learner -> V]:
+                 ready' = [ready EXCEPT ![self] = [l \in Learner |-> ready[self][l] \cup {rdy[l]}]]
             /\ pc' = [pc EXCEPT ![self] = "l0"]
             /\ UNCHANGED << bcast, output >>
 
-acceptor(self) == l0(self)
+byzAcceptor(self) == l0(self)
 
 Next == (\E self \in Learner: learner(self))
            \/ (\E self \in HonestAcceptor: acceptor(self))
+           \/ (\E self \in B: byzAcceptor(self))
 
 Spec == /\ Init /\ [][Next]_vars
         /\ \A self \in Learner : WF_vars(learner(self))
@@ -149,8 +171,10 @@ LiveLearner == {l \in Learner :
     \E Q \in LG.quorums[l] : Q \subseteq W}
 
 Safety ==
-    /\  \A l \in Learner : pc[l] = "Done" =>
-            \E l2 \in Learner : output[l] \in bcast
+    /\  \A l \in Learner :
+        /\  pc[l] = "Done"
+        /\  \E Q \in LG.quorums[l] : Q \cap B = {}
+        =>  \E l2 \in Learner : output[l] \in bcast
     /\  \A l1,l2 \in Learner :
         /\  Entangled(l1,l2)
         /\  pc[l1] = "Done"
@@ -165,8 +189,7 @@ Liveness ==
             [](pc[l1] = "Done" => <>(pc[l2] = "Done"))
 
 FairSpec ==
-    /\  Init /\ [][Next]_vars
-    /\  \A self \in Learner : WF_vars(learner(self))
+    /\  Spec
     /\  \A a \in W : WF_vars(acceptor(a))
 
 ================================        
