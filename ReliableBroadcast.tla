@@ -98,7 +98,7 @@ Safety ==
     /\  \A l \in Learner :
         /\  pc[l] = "Done"
         /\  \E Q \in LG.quorums[l] : Q \cap B = {}
-        =>  \E l2 \in Learner : output[l] \in bcast
+        =>  output[l] \in bcast
     /\  \A l1,l2 \in Learner :
         /\  Entangled(l1,l2)
         /\  pc[l1] = "Done"
