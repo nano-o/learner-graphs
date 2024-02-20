@@ -62,6 +62,7 @@ l0:     while (TRUE)
             with (readyForV = {a \in Acceptor : v \in ready[a][l]}) {
                 when \A Q \in LG.quorums[l] :
                     \/  Q \cap readyForV # {}
+                    \* TODO: this is wrong:
                     \/  \E a \in Q : ProvenMalicious(a);
                 ready[self][l] := ready[self][l] \cup {v}; 
             }
