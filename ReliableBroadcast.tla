@@ -26,9 +26,11 @@ HonestAcceptor == Acceptor \ B
         ready = [a \in Acceptor |-> [l \in Learner |-> {}]];
     define {
         ProvenMalicious(a) == \E v1,v2 \in V :
-            /\  v1 # v2
-            /\  \/  {v1,v2} \subseteq echo[a]
-                \/  \E l \in Learner : {v1,v2} \subseteq ready[a][l]
+            v1 # v2 /\ {v1,v2} \subseteq echo[a]
+        NotEntangled(l1,l2) == 
+            /\  l1 # l2 \* a learner is always entangled with itself
+            /\  \A S \in LG.safeSets[<<l1,l2>>] :
+                    \E a \in S : ProvenMalicious(a)
     }
     fair process (learner \in Learner)
         variables
@@ -54,25 +56,30 @@ l0:     while (TRUE)
             with (Q \in LG.quorums[l]) {
                 when ready[self][l] = {};
                 when \A a \in Q : v \in echo[a];
-                ready[self][l] := ready[self][l] \cup {v}; 
+                \* check for conflicts:
+                when \A l2 \in Learner \ {l} : \A v2 \in V \ {v} :
+                    v2 \in ready[self][l2] => NotEntangled(l,l2);
+                ready[self][l] := ready[self][l] \cup {v};
             }
         or
             with (v \in V)
-            with (l \in Learner)
-            with (readyForV = {a \in Acceptor : v \in ready[a][l]}) {
-                when \A Q \in LG.quorums[l] :
-                    \/  Q \cap readyForV # {}
-                    \* TODO: this is wrong:
-                    \/  \E a \in Q : ProvenMalicious(a);
-                ready[self][l] := ready[self][l] \cup {v}; 
+            with (l1 \in Learner, l2 \in Learner) {
+                when \A Q \in LG.quorums[l1] : \E a2 \in Q : v \in ready[a2][l2];
+                \* check for conflicts:
+                when \A l3 \in Learner : \A v2 \in V \ {v} :
+                    v2 \in ready[self][l3] => NotEntangled(l1,l3);
+                ready[self][l1] := ready[self][l1] \cup {v};
             }
-    }
+        }
     process (byzAcceptor \in B) {
 l0:     while (TRUE) {
+            either
             with (v \in V)
-                echo[self] := echo[self] \cup {v};
-            with (rdy \in [Learner -> V]) {
-                ready[self] := [l \in Learner |-> ready[self][l] \cup {rdy[l]}];
+                echo[self] := echo[self] \cup {v}
+            or
+            with (l \in Learner) {
+                with (v \in V)
+                    ready[self][l] := ready[self][l] \cup {v};
             }
         }
     }
@@ -109,7 +116,7 @@ Liveness ==
     /\  Cardinality(bcast) = 1 =>
             \A l \in LiveLearner : <>(pc[l] = "Done" /\ bcast = {output[l]})
     \* This one is interesting (I think this is the best we can guarantee):
-    /\  \A l1,l2 \in LiveLearner : Entangled(l1,l2) =>
+    /\  \A l1 \in Learner : \A l2 \in LiveLearner : Entangled(l1,l2) =>
             [](pc[l1] = "Done" => <>(pc[l2] = "Done"))
 
 FairSpec ==
