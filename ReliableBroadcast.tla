@@ -26,7 +26,14 @@ HonestAcceptor == Acceptor \ B
         ready = [a \in Acceptor |-> [l \in Learner |-> {}]];
     define {
         ProvenMalicious(a) == \E v1,v2 \in V :
-            v1 # v2 /\ {v1,v2} \subseteq echo[a]
+            /\  v1 # v2
+            /\  \/  {v1,v2} \subseteq echo[a]
+                \* TODO: this is recursive:
+                \* \/  \E l1,l2 \in Learner :
+                \*     /\  l1 # l2
+                \*     /\  v1 \in ready[a][l1]
+                \*     /\  v2 \in ready[a][l2]
+                \*     /\  \neg NotEntangled(l1,l2)
         NotEntangled(l1,l2) == 
             /\  l1 # l2 \* a learner is always entangled with itself
             /\  \A S \in LG.safeSets[<<l1,l2>>] :
@@ -57,16 +64,20 @@ l0:     while (TRUE)
                 when ready[self][l] = {};
                 when \A a \in Q : v \in echo[a];
                 \* check for conflicts:
-                when \A l2 \in Learner \ {l} : \A v2 \in V \ {v} :
+                when \A l2 \in Learner : \A v2 \in V \ {v} :
                     v2 \in ready[self][l2] => NotEntangled(l,l2);
                 ready[self][l] := ready[self][l] \cup {v};
             }
         or
             with (v \in V)
             with (l1 \in Learner, l2 \in Learner) {
-                when \A Q \in LG.quorums[l1] : \E a2 \in Q : v \in ready[a2][l2];
+                when \A Q \in LG.quorums[l1] : \E a2 \in Q : 
+                    /\  v \in ready[a2][l2]
+                    /\  v \in bcast;
+                    \* and we need a proof for the ready message:
+                    \* /\  \E Q2 \in LG.quorums[l2] : \A a3 \in Q2 : v \in echo[a3];
                 \* check for conflicts:
-                when \A l3 \in Learner : \A v2 \in V \ {v} :
+                when \A l3 \in Learner \ {l1} : \A v2 \in V \ {v} :
                     v2 \in ready[self][l3] => NotEntangled(l1,l3);
                 ready[self][l1] := ready[self][l1] \cup {v};
             }
@@ -104,7 +115,7 @@ LiveLearner == {l \in Learner :
 Safety ==
     /\  \A l \in Learner :
         /\  pc[l] = "Done"
-        /\  \E Q \in LG.quorums[l] : Q \cap B = {}
+        /\  \E Q \in LG.quorums[l] : Q \cap B = {} \* SafeLearner
         =>  output[l] \in bcast
     /\  \A l1,l2 \in Learner :
         /\  Entangled(l1,l2)
