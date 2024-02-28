@@ -1,6 +1,6 @@
 # Using TLA to explore solving reliable broadcast in the learner-graph model
 
-The algorithm currently specified in `ReliableBroadcast.tla` violates the liveness property specified in the same file.
+The algorithm currently specified in [`ReliableBroadcast.tla`](./ReliableBroadcast.tla) violates the liveness property specified in the same file.
 TLC finds the following counter-example.
 
 We have 3 learners `la`, `lb`, and `lc` and 3 acceptos `a1`, `a2`, and `a3`.
@@ -8,7 +8,7 @@ Only `a1` is malicious.
 Each learner has a single quorums: `la` has quorum `Qa={a1,a2}`, `lb` has quorum `Qb={a2,a3}`, and `lc` has quorum `Qc={a3,a1}`.
 Finally, the safe sets are set up as follows: `la-lb={a2}`, `la-lc={a1}`, and `lb-lc={a1,a3}`.
 This means that if `a1` only is malicious, then `la` and `lc` can disagree, and `lb` can disagree with `lc` but must agree with `la`.
-This is all specified as `LG4` in `TLCReliableBroadcast.tla`.
+This is all specified as `LG4` in [`TLCReliableBroadcast.tla`](./TLCReliableBroadcast.tla).
 
 Now we can get into the following situation:
 ```tla
