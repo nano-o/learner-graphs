@@ -27,12 +27,4 @@ Here `la` has an output, and so the liveness property requires `lb` to output (b
 However, `a2` and `a3` cannot get ready for `v1` for `lb` because they are ready for `v2 # v1` for `la` and, with the current protocol, they do not detect that `a1` is malicious (which would allow them to get ready for `v1` for `lb`).
 
 TLC can produce a full trace as follows.
-First translate the PlucCal code to TLA:
-```
-java -cp tla2tools.jar pcal.trans ReliableBroadcast.tla
-```
-The run the model-checker:
-```
-java -XX:+UseParallelGC -jar tla2tools.jar -config TLCReliableBroadcast.cfg -workers 4 TLCReliableBroadcast.tla
-```
-
+On Linux, first translate the PlucCal code to TLA with `make pcal`, then run the TLC model-checker with `make tlc`.
