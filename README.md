@@ -28,3 +28,6 @@ However, `a2` and `a3` cannot get ready for `v1` for `lb` because they are ready
 
 TLC can produce a full trace as follows.
 On Linux, first translate the PlucCal code to TLA with `make pcal`, then run the TLC model-checker with `make tlc`.
+
+In this example we could detect that `a1` is malicious because it got ready for `v1` for `la` but there is no quorum of echoes for `v1`.
+In general, it seems that we would need to check that acceptors get ready legitimately, which means possibly following a long chain of acceptors that are recursively blocked until we arrive at a quorum of echoes.
