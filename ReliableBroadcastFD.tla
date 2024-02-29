@@ -102,7 +102,7 @@ l0:     while (TRUE) {
             }
         }
     }
-}
+}*)
 
 TypeOK ==
     /\  bcast \in (SUBSET V) \ {{}}
