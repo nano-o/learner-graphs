@@ -1,0 +1,233 @@
+Temporal properties were violated.
+The following behavior constitutes a counter-example:
+1: <Initial predicate>
+/\ fd = (a1 :> {} @@ a2 :> {} @@ a3 :> {})
+/\ bcast = {v1, v2}
+/\ pc = ( a1 :> "l0" @@
+  a2 :> "l0_a" @@
+  a3 :> "l0_a" @@
+  la :> "l0_l" @@
+  lb :> "l0_l" @@
+  lc :> "l0_l" @@
+  "failure-detector" :> "l0_" )
+/\ ready = ( a1 :> (la :> {} @@ lb :> {} @@ lc :> {}) @@
+  a2 :> (la :> {} @@ lb :> {} @@ lc :> {}) @@
+  a3 :> (la :> {} @@ lb :> {} @@ lc :> {}) )
+/\ output = (la :> <<>> @@ lb :> <<>> @@ lc :> <<>>)
+/\ echo = (a1 :> {} @@ a2 :> {} @@ a3 :> {})
+2: <l0(a1) line 180, col 13 to line 189, col 48 of module ReliableBroadcast>
+/\ fd = (a1 :> {} @@ a2 :> {} @@ a3 :> {})
+/\ bcast = {v1, v2}
+/\ pc = ( a1 :> "l0" @@
+  a2 :> "l0_a" @@
+  a3 :> "l0_a" @@
+  la :> "l0_l" @@
+  lb :> "l0_l" @@
+  lc :> "l0_l" @@
+  "failure-detector" :> "l0_" )
+/\ ready = ( a1 :> (la :> {v2} @@ lb :> {} @@ lc :> {}) @@
+  a2 :> (la :> {} @@ lb :> {} @@ lc :> {}) @@
+  a3 :> (la :> {} @@ lb :> {} @@ lc :> {}) )
+/\ output = (la :> <<>> @@ lb :> <<>> @@ lc :> <<>>)
+/\ echo = (a1 :> {} @@ a2 :> {} @@ a3 :> {})
+3: <l0_("failure-detector") line 128, col 14 to line 137, col 58 of module ReliableBroadcast>
+/\ fd = (a1 :> {} @@ a2 :> {a1} @@ a3 :> {})
+/\ bcast = {v1, v2}
+/\ pc = ( a1 :> "l0" @@
+  a2 :> "l0_a" @@
+  a3 :> "l0_a" @@
+  la :> "l0_l" @@
+  lb :> "l0_l" @@
+  lc :> "l0_l" @@
+  "failure-detector" :> "l0_" )
+/\ ready = ( a1 :> (la :> {v2} @@ lb :> {} @@ lc :> {}) @@
+  a2 :> (la :> {} @@ lb :> {} @@ lc :> {}) @@
+  a3 :> (la :> {} @@ lb :> {} @@ lc :> {}) )
+/\ output = (la :> <<>> @@ lb :> <<>> @@ lc :> <<>>)
+/\ echo = (a1 :> {} @@ a2 :> {} @@ a3 :> {})
+4: <l0_a(a3) line 151, col 15 to line 176, col 50 of module ReliableBroadcast>
+/\ fd = (a1 :> {} @@ a2 :> {a1} @@ a3 :> {})
+/\ bcast = {v1, v2}
+/\ pc = ( a1 :> "l0" @@
+  a2 :> "l0_a" @@
+  a3 :> "l0_a" @@
+  la :> "l0_l" @@
+  lb :> "l0_l" @@
+  lc :> "l0_l" @@
+  "failure-detector" :> "l0_" )
+/\ ready = ( a1 :> (la :> {v2} @@ lb :> {} @@ lc :> {}) @@
+  a2 :> (la :> {} @@ lb :> {} @@ lc :> {}) @@
+  a3 :> (la :> {} @@ lb :> {} @@ lc :> {}) )
+/\ output = (la :> <<>> @@ lb :> <<>> @@ lc :> <<>>)
+/\ echo = (a1 :> {} @@ a2 :> {} @@ a3 :> {v2})
+5: <l0_a(a2) line 151, col 15 to line 176, col 50 of module ReliableBroadcast>
+/\ fd = (a1 :> {} @@ a2 :> {a1} @@ a3 :> {})
+/\ bcast = {v1, v2}
+/\ pc = ( a1 :> "l0" @@
+  a2 :> "l0_a" @@
+  a3 :> "l0_a" @@
+  la :> "l0_l" @@
+  lb :> "l0_l" @@
+  lc :> "l0_l" @@
+  "failure-detector" :> "l0_" )
+/\ ready = ( a1 :> (la :> {v2} @@ lb :> {} @@ lc :> {}) @@
+  a2 :> (la :> {} @@ lb :> {} @@ lc :> {}) @@
+  a3 :> (la :> {} @@ lb :> {} @@ lc :> {}) )
+/\ output = (la :> <<>> @@ lb :> <<>> @@ lc :> <<>>)
+/\ echo = (a1 :> {} @@ a2 :> {v1} @@ a3 :> {v2})
+6: <l0_a(a2) line 151, col 15 to line 176, col 50 of module ReliableBroadcast>
+/\ fd = (a1 :> {} @@ a2 :> {a1} @@ a3 :> {})
+/\ bcast = {v1, v2}
+/\ pc = ( a1 :> "l0" @@
+  a2 :> "l0_a" @@
+  a3 :> "l0_a" @@
+  la :> "l0_l" @@
+  lb :> "l0_l" @@
+  lc :> "l0_l" @@
+  "failure-detector" :> "l0_" )
+/\ ready = ( a1 :> (la :> {v2} @@ lb :> {} @@ lc :> {}) @@
+  a2 :> (la :> {} @@ lb :> {} @@ lc :> {v2}) @@
+  a3 :> (la :> {} @@ lb :> {} @@ lc :> {}) )
+/\ output = (la :> <<>> @@ lb :> <<>> @@ lc :> <<>>)
+/\ echo = (a1 :> {} @@ a2 :> {v1} @@ a3 :> {v2})
+7: <l0(a1) line 180, col 13 to line 189, col 48 of module ReliableBroadcast>
+/\ fd = (a1 :> {} @@ a2 :> {a1} @@ a3 :> {})
+/\ bcast = {v1, v2}
+/\ pc = ( a1 :> "l0" @@
+  a2 :> "l0_a" @@
+  a3 :> "l0_a" @@
+  la :> "l0_l" @@
+  lb :> "l0_l" @@
+  lc :> "l0_l" @@
+  "failure-detector" :> "l0_" )
+/\ ready = ( a1 :> (la :> {v2} @@ lb :> {} @@ lc :> {}) @@
+  a2 :> (la :> {} @@ lb :> {} @@ lc :> {v2}) @@
+  a3 :> (la :> {} @@ lb :> {} @@ lc :> {}) )
+/\ output = (la :> <<>> @@ lb :> <<>> @@ lc :> <<>>)
+/\ echo = (a1 :> {v1} @@ a2 :> {v1} @@ a3 :> {v2})
+8: <l0_a(a3) line 151, col 15 to line 176, col 50 of module ReliableBroadcast>
+/\ fd = (a1 :> {} @@ a2 :> {a1} @@ a3 :> {})
+/\ bcast = {v1, v2}
+/\ pc = ( a1 :> "l0" @@
+  a2 :> "l0_a" @@
+  a3 :> "l0_a" @@
+  la :> "l0_l" @@
+  lb :> "l0_l" @@
+  lc :> "l0_l" @@
+  "failure-detector" :> "l0_" )
+/\ ready = ( a1 :> (la :> {v2} @@ lb :> {} @@ lc :> {}) @@
+  a2 :> (la :> {} @@ lb :> {} @@ lc :> {v2}) @@
+  a3 :> (la :> {v2} @@ lb :> {} @@ lc :> {}) )
+/\ output = (la :> <<>> @@ lb :> <<>> @@ lc :> <<>>)
+/\ echo = (a1 :> {v1} @@ a2 :> {v1} @@ a3 :> {v2})
+9: <l0_a(a3) line 151, col 15 to line 176, col 50 of module ReliableBroadcast>
+/\ fd = (a1 :> {} @@ a2 :> {a1} @@ a3 :> {})
+/\ bcast = {v1, v2}
+/\ pc = ( a1 :> "l0" @@
+  a2 :> "l0_a" @@
+  a3 :> "l0_a" @@
+  la :> "l0_l" @@
+  lb :> "l0_l" @@
+  lc :> "l0_l" @@
+  "failure-detector" :> "l0_" )
+/\ ready = ( a1 :> (la :> {v2} @@ lb :> {} @@ lc :> {}) @@
+  a2 :> (la :> {} @@ lb :> {} @@ lc :> {v2}) @@
+  a3 :> (la :> {v2} @@ lb :> {v2} @@ lc :> {}) )
+/\ output = (la :> <<>> @@ lb :> <<>> @@ lc :> <<>>)
+/\ echo = (a1 :> {v1} @@ a2 :> {v1} @@ a3 :> {v2})
+10: <l0_a(a2) line 151, col 15 to line 176, col 50 of module ReliableBroadcast>
+/\ fd = (a1 :> {} @@ a2 :> {a1} @@ a3 :> {})
+/\ bcast = {v1, v2}
+/\ pc = ( a1 :> "l0" @@
+  a2 :> "l0_a" @@
+  a3 :> "l0_a" @@
+  la :> "l0_l" @@
+  lb :> "l0_l" @@
+  lc :> "l0_l" @@
+  "failure-detector" :> "l0_" )
+/\ ready = ( a1 :> (la :> {v2} @@ lb :> {} @@ lc :> {}) @@
+  a2 :> (la :> {v1} @@ lb :> {} @@ lc :> {v2}) @@
+  a3 :> (la :> {v2} @@ lb :> {v2} @@ lc :> {}) )
+/\ output = (la :> <<>> @@ lb :> <<>> @@ lc :> <<>>)
+/\ echo = (a1 :> {v1} @@ a2 :> {v1} @@ a3 :> {v2})
+11: <l0_a(a2) line 151, col 15 to line 176, col 50 of module ReliableBroadcast>
+/\ fd = (a1 :> {} @@ a2 :> {a1} @@ a3 :> {})
+/\ bcast = {v1, v2}
+/\ pc = ( a1 :> "l0" @@
+  a2 :> "l0_a" @@
+  a3 :> "l0_a" @@
+  la :> "l0_l" @@
+  lb :> "l0_l" @@
+  lc :> "l0_l" @@
+  "failure-detector" :> "l0_" )
+/\ ready = ( a1 :> (la :> {v2} @@ lb :> {} @@ lc :> {}) @@
+  a2 :> (la :> {v1, v2} @@ lb :> {} @@ lc :> {v2}) @@
+  a3 :> (la :> {v2} @@ lb :> {v2} @@ lc :> {}) )
+/\ output = (la :> <<>> @@ lb :> <<>> @@ lc :> <<>>)
+/\ echo = (a1 :> {v1} @@ a2 :> {v1} @@ a3 :> {v2})
+12: <l0_a(a3) line 151, col 15 to line 176, col 50 of module ReliableBroadcast>
+/\ fd = (a1 :> {} @@ a2 :> {a1} @@ a3 :> {})
+/\ bcast = {v1, v2}
+/\ pc = ( a1 :> "l0" @@
+  a2 :> "l0_a" @@
+  a3 :> "l0_a" @@
+  la :> "l0_l" @@
+  lb :> "l0_l" @@
+  lc :> "l0_l" @@
+  "failure-detector" :> "l0_" )
+/\ ready = ( a1 :> (la :> {v2} @@ lb :> {} @@ lc :> {}) @@
+  a2 :> (la :> {v1, v2} @@ lb :> {} @@ lc :> {v2}) @@
+  a3 :> (la :> {v2} @@ lb :> {v2} @@ lc :> {v2}) )
+/\ output = (la :> <<>> @@ lb :> <<>> @@ lc :> <<>>)
+/\ echo = (a1 :> {v1} @@ a2 :> {v1} @@ a3 :> {v2})
+13: <l0_l(la) line 141, col 15 to line 147, col 55 of module ReliableBroadcast>
+/\ fd = (a1 :> {} @@ a2 :> {a1} @@ a3 :> {})
+/\ bcast = {v1, v2}
+/\ pc = ( a1 :> "l0" @@
+  a2 :> "l0_a" @@
+  a3 :> "l0_a" @@
+  la :> "Done" @@
+  lb :> "l0_l" @@
+  lc :> "l0_l" @@
+  "failure-detector" :> "l0_" )
+/\ ready = ( a1 :> (la :> {v2} @@ lb :> {} @@ lc :> {}) @@
+  a2 :> (la :> {v1, v2} @@ lb :> {} @@ lc :> {v2}) @@
+  a3 :> (la :> {v2} @@ lb :> {v2} @@ lc :> {v2}) )
+/\ output = (la :> v2 @@ lb :> <<>> @@ lc :> <<>>)
+/\ echo = (a1 :> {v1} @@ a2 :> {v1} @@ a3 :> {v2})
+14: <l0_("failure-detector") line 128, col 14 to line 137, col 58 of module ReliableBroadcast>
+/\ fd = (a1 :> {} @@ a2 :> {a1} @@ a3 :> {a1})
+/\ bcast = {v1, v2}
+/\ pc = ( a1 :> "l0" @@
+  a2 :> "l0_a" @@
+  a3 :> "l0_a" @@
+  la :> "Done" @@
+  lb :> "l0_l" @@
+  lc :> "l0_l" @@
+  "failure-detector" :> "l0_" )
+/\ ready = ( a1 :> (la :> {v2} @@ lb :> {} @@ lc :> {}) @@
+  a2 :> (la :> {v1, v2} @@ lb :> {} @@ lc :> {v2}) @@
+  a3 :> (la :> {v2} @@ lb :> {v2} @@ lc :> {v2}) )
+/\ output = (la :> v2 @@ lb :> <<>> @@ lc :> <<>>)
+/\ echo = (a1 :> {v1} @@ a2 :> {v1} @@ a3 :> {v2})
+15: <l0_("failure-detector") line 128, col 14 to line 137, col 58 of module ReliableBroadcast>
+/\ fd = (a1 :> {} @@ a2 :> {a1} @@ a3 :> {a1})
+/\ bcast = {v1, v2}
+/\ pc = ( a1 :> "l0" @@
+  a2 :> "l0_a" @@
+  a3 :> "l0_a" @@
+  la :> "Done" @@
+  lb :> "l0_l" @@
+  lc :> "l0_l" @@
+  "failure-detector" :> "Done" )
+/\ ready = ( a1 :> (la :> {v2} @@ lb :> {} @@ lc :> {}) @@
+  a2 :> (la :> {v1, v2} @@ lb :> {} @@ lc :> {v2}) @@
+  a3 :> (la :> {v2} @@ lb :> {v2} @@ lc :> {v2}) )
+/\ output = (la :> v2 @@ lb :> <<>> @@ lc :> <<>>)
+/\ echo = (a1 :> {v1} @@ a2 :> {v1} @@ a3 :> {v2})
+16: Stuttering
+Finished checking temporal properties in 58s at 2024-02-28 17:16:07
+Progress(16) at 2024-02-28 17:16:07: 277,723,904 states generated (5,256,356 s/min), 11,470,843 distinct states found (217,103 ds/min), 3,073,420 states left on queue.
+277723904 states generated, 11470843 distinct states found, 3073420 states left on queue.
+The depth of the complete state graph search is 16.
+Finished in 3170158ms at (2024-02-28 17:16:07)

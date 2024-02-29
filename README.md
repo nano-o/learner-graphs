@@ -36,3 +36,5 @@ In general, it seems that we would need to check that acceptors get ready legiti
 
 Instead of trying to detect failures, we could assume that acceptors have access to a failure-detector abstraction that eventually identifies all malicious acceptors.
 This is what we do in [`ReliableBroadcastFD.tla`](./ReliableBroadcastFD.tla).
+The problem is that there is still a liveness violation.
+See [`trace.txt`](./trace.txt) for a full trace.
