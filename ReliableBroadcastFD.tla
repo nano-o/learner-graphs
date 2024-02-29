@@ -43,7 +43,7 @@ HonestAcceptor == Acceptor \ B
     fair process (fd \in {"failure-detector"})
     {
 l0:     while (\E a \in HonestAcceptor : \E b \in B : b \notin fd[a])
-        with (a \in HonestAcceptor, b \in B) {
+        with (a \in HonestAcceptor, b \in B) { \* NOTE notation idea: while some () {}
             when b \notin fd[a];
             fd[a] := fd[a] \cup {b};
         }
@@ -60,26 +60,27 @@ l0:     with (v \in V) {
     }
     process (acceptor \in HonestAcceptor) {
 l0:     while (TRUE)
-        either
+        either \* echo a value
             with (v \in V) {
                 when v \in bcast /\ echo[self] = {};
                 echo[self] := echo[self] \cup {v};
             }
-        or
+        or \* send ready when witnessing a quorum of echoes
             with (v \in V)
             with (l \in Learner)
             with (Q \in LG.quorums[l]) {
                 when ready[self][l] = {};
                 when \A a \in Q : v \in echo[a];
-                \* check for conflicts:
+                \* check for conflicts (NOTE needed for safety):
                 when \A l2 \in Learner : \A v2 \in V \ {v} :
                     v2 \in ready[self][l2] => NotEntangled(self,l,l2);
                 ready[self][l] := ready[self][l] \cup {v};
             }
-        or
+        or \* send ready when blocked by ready acceptors
             with (v \in V)
             with (l1 \in Learner, l2 \in Learner) {
                 when v \in bcast;
+                when ready[self][l1] = {}; \* no good... but no good without it either (liveness fails in both cases)
                 when \A Q \in LG.quorums[l1] :
                     \E a2 \in Q : v \in ready[a2][l2];
                 \* check for conflicts:
@@ -102,7 +103,6 @@ l0:     while (TRUE) {
         }
     }
 }
-*)
 
 TypeOK ==
     /\  bcast \in (SUBSET V) \ {{}}
