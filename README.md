@@ -38,3 +38,5 @@ Instead of trying to detect failures, we could assume that acceptors have access
 This is what we do in [`ReliableBroadcastFD.tla`](./ReliableBroadcastFD.tla).
 The problem is that there is still a liveness violation.
 See [`trace.txt`](./trace.txt) for a full trace.
+
+Use `make pcal-fd` and `make tlc-fd` for this version.

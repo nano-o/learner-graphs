@@ -15,4 +15,11 @@ pcal: tla2tools.jar ReliableBroadcast.tla
 tlc: tla2tools.jar ReliableBroadcast.tla TLCReliableBroadcast.cfg TLCReliableBroadcast.tla
 	java -XX:+UseParallelGC -jar tla2tools.jar -config TLCReliableBroadcast.cfg -workers 4 TLCReliableBroadcast.tla
 
-.PHONY: pcal tlc
+pcal-fd: tla2tools.jar ReliableBroadcastFD.tla
+	java -cp tla2tools.jar pcal.trans ReliableBroadcastFD.tla
+
+tlc-fd: tla2tools.jar ReliableBroadcastFD.tla TLCReliableBroadcast.cfg TLCReliableBroadcastFD.tla
+
+	java -XX:+UseParallelGC -jar tla2tools.jar -config TLCReliableBroadcast.cfg -workers 4 TLCReliableBroadcastFD.tla
+
+.PHONY: pcal tlc pcal-fd tlc-fd
