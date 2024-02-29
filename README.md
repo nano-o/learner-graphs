@@ -31,3 +31,8 @@ On Linux, first translate the PlucCal code to TLA with `make pcal`, then run the
 
 In this example we could detect that `a1` is malicious because it got ready for `v1` for `la` but there is no quorum of echoes for `v1`.
 In general, it seems that we would need to check that acceptors get ready legitimately, which means possibly following a long chain of acceptors that are recursively blocked until we arrive at a quorum of echoes.
+
+## Failure-detector version
+
+Instead of trying to detect failures, we could assume that acceptors have access to a failure-detector abstraction that eventually identifies all malicious acceptors.
+This is what we do in [`ReliableBroadcastFD.tla`](./ReliableBroadcastFD.tla).
