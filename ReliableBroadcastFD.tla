@@ -11,6 +11,7 @@ CONSTANTS
 ASSUME B \cap W = {}
 
 ASSUME IsValidLearnerGraph(LG)
+ASSUME Condensed(LG)
 
 Learner == LG.learners
 Acceptor == LG.acceptors
@@ -80,7 +81,7 @@ l0:     while (TRUE)
             with (v \in V)
             with (l1 \in Learner, l2 \in Learner) {
                 when v \in bcast;
-                when ready[self][l1] = {}; \* no good... but no good without it either (liveness fails in both cases)
+                \* when ready[self][l1] = {}; \* no good... but no good without it either (liveness fails in both cases)
                 when \A Q \in LG.quorums[l1] :
                     \E a2 \in Q : v \in ready[a2][l2];
                 \* check for conflicts:

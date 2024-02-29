@@ -38,9 +38,9 @@ LG4 == [
         [] l = lb -> {{a2,a3}}
     ],
     safeSets |-> [e \in {la,lb,lc}\times {la,lb,lc} |->
-        CASE Members(e) = {la,lb} -> {{a2}}
+        CASE Members(e) = {la,lb} -> {{a2,a3}}
         [] Members(e) = {la,lc} -> {{a1}}
-        [] Members(e) = {lb,lc} -> {{a1,a3}} \* lb prefers la if la and lc disagree
+        [] Members(e) = {lb,lc} -> {{a1,a2,a3}} \* lb prefers la if la and lc disagree
         [] OTHER -> {{}}
     ]
 ]
