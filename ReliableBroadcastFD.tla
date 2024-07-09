@@ -26,13 +26,14 @@ HonestAcceptor == Acceptor \ B
         bcast \in (SUBSET V) \ {{}}; \* the `^value(s)^' broadcast; multiple values model a malicious sender
         echo = [a \in Acceptor |-> {}]; \* echo messages sent by the acceptors
         \* ready messages sent by the acceptors; note that acceptors get ready per learner:
-        ready = [a \in Acceptor |-> [l \in Learner |-> {}]]; 
+        ready = [a \in Acceptor |-> [l \in Learner |-> {}]];
         fd = [a \in Acceptor |-> {}]; \* failure-detector output
 
     define {
-        NotEntangled(self,l1,l2) ==
+        KnowsNotEntangled(self,l1,l2) ==
+            \* acceptor `self` knows that learners `l1` and `l2` are not entangled when both:
             /\  l1 # l2 \* a learner is always entangled with itself
-            \* l1 and l2 are don't have to agree if none of their safe sets are completely well-behaved:
+            \* l1 and l2 don't have to agree if none of their safe sets are completely well-behaved:
             /\  \A S \in LG.safeSets[<<l1,l2>>] :
                     \E a \in S : a \in fd[self]
     }
@@ -53,17 +54,19 @@ l0:     while (\E a \in HonestAcceptor : \E b \in B : b \notin fd[a])
         variables
             output = <<>>;
     {
+        \* a learner outputs when one of its quorums is ready:
 l0:     with (v \in V) {
             when \E Q \in LG.quorums[self] :
                 \A a \in Q : v \in ready[a][self];
             output := v;
         }
     }
-    process (acceptor \in HonestAcceptor) {
+    process (acceptor \in Acceptor) {
 l0:     while (TRUE)
-        either \* echo a value
+        either \* echo a unique value (unless malicious)
             with (v \in V) {
-                when v \in bcast /\ echo[self] = {};
+                when v \in bcast;
+                when self \notin B => echo[self] = {}; \* malicious nodes can echo different values
                 echo[self] := echo[self] \cup {v};
             }
         or \* send ready when witnessing a quorum of echoes
@@ -74,35 +77,22 @@ l0:     while (TRUE)
                 when \A a \in Q : v \in echo[a];
                 \* check for conflicts (NOTE needed for safety):
                 when \A l2 \in Learner : \A v2 \in V \ {v} :
-                    v2 \in ready[self][l2] => NotEntangled(self,l,l2);
+                    v2 \in ready[self][l2] => KnowsNotEntangled(self,l,l2);
                 ready[self][l] := ready[self][l] \cup {v};
             }
         or \* send ready when blocked by ready acceptors
             with (v \in V)
             with (l1 \in Learner, l2 \in Learner) {
                 when v \in bcast;
-                \* when ready[self][l1] = {}; \* no good... but no good without it either (liveness fails in both cases)
+                when ready[self][l1] = {}; \* no good... but no good without it either (liveness fails in both cases)
                 when \A Q \in LG.quorums[l1] :
                     \E a2 \in Q : v \in ready[a2][l2];
                 \* check for conflicts:
                 when \A l3 \in Learner \ {l1} : \A v2 \in V \ {v} :
-                    v2 \in ready[self][l3] => NotEntangled(self,l1,l3);
+                    v2 \in ready[self][l3] => KnowsNotEntangled(self,l1,l3);
                 ready[self][l1] := ready[self][l1] \cup {v};
             }
         }
-    \* `^\newpage^'
-    process (byzAcceptor \in B) {
-l0:     while (TRUE) {
-            either
-            with (v \in V)
-                echo[self] := echo[self] \cup {v}
-            or
-            with (l \in Learner) {
-                with (v \in V)
-                    ready[self][l] := ready[self][l] \cup {v};
-            }
-        }
-    }
 }*)
 
 TypeOK ==

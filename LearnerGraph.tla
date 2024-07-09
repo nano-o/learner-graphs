@@ -12,17 +12,19 @@
 
 Reverse(p) == <<p[2], p[1]>>
 X \subset Y == X # Y /\ X \subseteq Y
+SetOfMinimalElements(S) == \A x \in S : \A y \in S : x # y => \neg (x \subset y)
 
 IsLearnerGraph(lg) ==
     \* NOTE quorums and safe sets should be minimal
     /\  lg.quorums \in [lg.learners -> SUBSET SUBSET lg.acceptors]
-    /\  \A l \in lg.learners : \A Q1 \in lg.quorums[l] : \neg (\exists Q2 \in lg.quorums[l] : Q2 \subset Q1)
+    /\  \A l \in lg.learners : SetOfMinimalElements(lg.quorums[l])
     /\  lg.safeSets \in [lg.learners \times lg.learners -> SUBSET SUBSET lg.acceptors]
-    /\  \A p \in lg.learners\times lg.learners : 
-            /\  lg.safeSets[p] = lg.safeSets[Reverse(p)]
-            /\  \A s1 \in lg.safeSets[p] : \neg (\exists s2 \in lg.safeSets[p] : s2 \subset s1)
+    /\  \A p \in lg.learners\times lg.learners :
+            /\  lg.safeSets[p] = lg.safeSets[Reverse(p)] \* symmetric
+            /\  SetOfMinimalElements(lg.safeSets[p])
 
 IsValidLearnerGraph(lg) ==
+    \* A quorum of l1, a quorum of l2, and a safe set of <<l1,l2>> should intersect
     /\  IsLearnerGraph(lg)
     /\  \A l1,l2 \in lg.learners : l1 # l2 =>
             \A s \in lg.safeSets[<<l1,l2>>] :
